@@ -1,0 +1,13 @@
+[project]
+name = "salt-kafka"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "salt>=3006",
+    "confluent-kafka>=2.4.0",
+]
+
+[project.entry-points."salt.loader"]
+"salt_kafka" = "salt_kafka"
