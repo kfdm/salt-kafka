@@ -21,10 +21,15 @@ def present(name, config=None):
     if name not in __salt__["kafka.list_topics"]():
         if __opts__["test"]:
             ret["comment"] = f"Topic {name} to be created"
+            ret["changes"]["to-create"] = name
+            if config:
+                ret["changes"]["config"] = config
             ret["result"] = None
             return ret
         elif __salt__["kafka.create_topics"](name, config=config)[name]:
             ret["changes"]["created"] = name
+            if config:
+                ret["changes"]["config"] = config
             ret["comment"] = f"Created topic {name}"
             return ret
         else:
@@ -36,15 +41,26 @@ def present(name, config=None):
     existing_config = __salt__["kafka.describe_topics"](name)[name]
 
     updated_config = {
-        key: config[key] for key in config if config[key] != existing_config[key]
+        key: config[key] for key in config if config[key] != existing_config.get(key)
     }
 
     if updated_config:
-        changed_config = __salt__["kafka.update_topic"](name, updated_config)
-        for key in changed_config:
-            ret["changes"][key] = (
-                f"Changed {existing_config[key]} to {changed_config[key]}"
-            )
+        if __opts__["test"]:
+            ret["result"] = None
+            ret["comment"] = "Will update config"
+            ret["changes"] = {
+                key: f"Will change {existing_config.get(key)} to {updated_config[key]}"
+                for key in updated_config
+            }
+        else:
+            changed_config = __salt__["kafka.update_topic"](name, updated_config)
+            ret["changes"] = {
+                key: f"Changed {existing_config.get(key)} to {changed_config[key]}"
+                for key in changed_config
+            }
+            ret["comment"] = "Config updated"
+    else:
+        ret["comment"] = "No config update needed"
 
     return ret
 
