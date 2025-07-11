@@ -2,7 +2,7 @@ my-topic:
     kafka.present:
         - config:
               cleanup.policy: delete
-              retention.ms: 604800006
+              retention.ms: {{salt['kafka.timedelta_ms']('7d')}}
 
 missing-topic:
     kafka.absent: []

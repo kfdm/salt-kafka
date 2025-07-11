@@ -1,4 +1,6 @@
 import logging
+import datetime
+import re
 
 log = logging.getLogger(__name__)
 
@@ -37,6 +39,30 @@ def _client():
             }
         )
     return __context__["_client"]
+
+
+TIMEDELTA_VARS = {
+    "weeks": "w",
+    "days": "d",
+    "hours": "h",
+    "minutes": "m",
+    "seconds": "s",
+    "milliseconds": "ms",
+    "microseconds": "us",
+}
+TIMEDELTA_RE = re.compile(
+    "".join([f"((?P<{k}>\d+?){TIMEDELTA_VARS[k]})?" for k in TIMEDELTA_VARS])
+)
+
+
+def timedelta_ms(value: str) -> int:
+    """
+    Parse a timedelta into milliseconds as used by Kafka
+    """
+    parsed = TIMEDELTA_RE.match(value).groupdict()
+    parts = {p: int(parsed[p]) for p in parsed if parsed[p] is not None}
+    td = datetime.timedelta(**parts)
+    return int(td.total_seconds() * 1000)
 
 
 def list_topics():
