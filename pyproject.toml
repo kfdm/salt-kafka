@@ -29,9 +29,6 @@ source = "https://codeberg.org/kfdm/salt-kafka"
 requires = ["uv_build>=0.7.20,<0.8.0"]
 build-backend = "uv_build"
 
-[tool.ruff]
-line-length = 100
-
 [tool.ruff.lint] # https://beta.ruff.rs/docs/rules/
 select = [
     "C",       # Complexity
