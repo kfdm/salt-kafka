@@ -67,10 +67,11 @@ def timedelta_ms(value: str) -> int:
 
 def list_topics():
     response = _client().list_topics(timeout=10)
-    return response.topics
+    return list(response.topics)
 
 
-def create_topic(name, num_partitions=3, replication_factor=1, config=None):
+def create_topic(name, num_partitions=3, replication_factor=1, config=None) -> bool:
+    # See https://docs.confluent.io/platform/current/clients/confluent-kafka-python/html/index.html#confluent_kafka.admin.NewTopic
     request = NewTopic(name, num_partitions, replication_factor)
     if config is not None:
         request.config = config
@@ -81,14 +82,14 @@ def create_topic(name, num_partitions=3, replication_factor=1, config=None):
     return changes[name]
 
 
-def delete_topic(name):
+def delete_topic(name: str) -> bool:
     response = _client().delete_topics([name])
     changes = {topic: response[topic].result() is None for topic in response}
     log.info("delete_topics %s", response)
     return changes[name]
 
 
-def describe_topic(name):
+def describe_topic(name: str) -> dict:
     request = [ConfigResource(ResourceType.TOPIC, name)]
     log.info("describe_topics %s", request)
     response = _client().describe_configs(request)
