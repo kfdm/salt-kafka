@@ -18,7 +18,7 @@ list:
 
 [group('module')]
 describe topic='test':
-    just _salt_call kafka.describe_topic {{ topic }}
+    just _salt_call kafka.describe_topics {{ topic }}
 
 [group('dev')]
 format:

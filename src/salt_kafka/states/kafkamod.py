@@ -23,7 +23,7 @@ def present(name, config=None):
             ret["comment"] = f"Topic {name} to be created"
             ret["result"] = None
             return ret
-        elif __salt__["kafka.create_topic"](name, config=config):
+        elif __salt__["kafka.create_topics"](name, config=config)[name]:
             ret["changes"]["created"] = name
             ret["comment"] = f"Created topic {name}"
             return ret
@@ -33,7 +33,8 @@ def present(name, config=None):
             return ret
 
     # Check if we need to update the config
-    existing_config = __salt__["kafka.describe_topic"](name)
+    existing_config = __salt__["kafka.describe_topics"](name)[name]
+
     updated_config = {
         key: config[key] for key in config if config[key] != existing_config[key]
     }
@@ -58,7 +59,7 @@ def absent(name):
     if __opts__["test"]:
         ret["comment"] = f"Topic {name} is set for removal"
         ret["result"] = None
-    elif __salt__["kafka.delete_topic"](name):
+    elif __salt__["kafka.delete_topics"](name)[name]:
         ret["changes"][name] = "Deleted"
         ret["comment"] = f"Removed topic {name}"
     else:

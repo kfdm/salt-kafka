@@ -70,28 +70,31 @@ def list_topics():
     return list(response.topics)
 
 
-def create_topic(name, num_partitions=3, replication_factor=1, config=None) -> bool:
+def create_topics(
+    *names: list[str], num_partitions=3, replication_factor=1, config=None
+) -> dict[str, bool]:
     # See https://docs.confluent.io/platform/current/clients/confluent-kafka-python/html/index.html#confluent_kafka.admin.NewTopic
-    request = NewTopic(name, num_partitions, replication_factor)
-    if config is not None:
-        request.config = config
+    request = [
+        NewTopic(name, num_partitions, replication_factor, config=config)
+        for name in names
+    ]
 
-    response = _client().create_topics([request])
+    response = _client().create_topics(request)
     changes = {topic: response[topic].result() is None for topic in response}
     log.info("create_topic %s", changes)
-    return changes[name]
+    return changes
 
 
-def delete_topic(name: str) -> bool:
-    response = _client().delete_topics([name])
+def delete_topics(*names: list[str]) -> dict[str, bool]:
+    response = _client().delete_topics(list(names))
     changes = {topic: response[topic].result() is None for topic in response}
     log.info("delete_topics %s", response)
-    return changes[name]
+    return changes
 
 
-def describe_topic(name: str) -> dict:
-    request = [ConfigResource(ResourceType.TOPIC, name)]
-    log.info("describe_topics %s", request)
+def describe_topics(*names: list) -> dict:
+    request = [ConfigResource(ResourceType.TOPIC, name) for name in names]
+    # log.info("describe_topics %s", request)
     response = _client().describe_configs(request)
     changes = {}
 
@@ -100,13 +103,10 @@ def describe_topic(name: str) -> dict:
         for config in response[topic].result().values():
             changes[topic.name][config.name] = config.value
 
-    return changes[name]
+    return changes
 
 
 def update_topic(name, config: dict):
-    client = _client()
-    print("new_config", config)
-
     new_config = [
         ConfigEntry(
             name=key,
@@ -117,7 +117,7 @@ def update_topic(name, config: dict):
     ]
     request = [ConfigResource(ResourceType.TOPIC, name, incremental_configs=new_config)]
 
-    response = client.incremental_alter_configs(request)
+    response = _client().incremental_alter_configs(request)
     for cr in response:
         if response[cr].result() is None:
             return {ce.name: ce.value for ce in cr.incremental_configs}
