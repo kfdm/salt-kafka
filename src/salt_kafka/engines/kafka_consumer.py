@@ -1,5 +1,6 @@
 # https://github.com/confluentinc/confluent-kafka-python?tab=readme-ov-file#basic-consumer-example
 import logging
+
 from salt.utils import event, json, process
 
 log = logging.getLogger(__name__)
@@ -10,8 +11,8 @@ except ImportError:
     log.warning("Cannot find confluent_kafka")
 
 __virtualname__ = "kafka_consumer"
-__opts__ = {}  # NOQA for linting
-__salt__ = {}  # NOQA for linting
+__opts__ = {}  # For linting
+__salt__ = {}  # For linting
 
 
 def __virtual__():
