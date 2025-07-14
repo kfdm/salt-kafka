@@ -1,6 +1,6 @@
 [project]
 name = "salt-kafka"
-version = "0.2.0"
+version = "0.3.0"
 description = "Manage Kafka clusters with Salt"
 readme = "README.md"
 # https://endoflife.date/python

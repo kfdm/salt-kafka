@@ -39,7 +39,7 @@ sdist = { url = "https://files.pythonhosted.org/packages/97/df/7a108838d73fd999c
 
 [[package]]
 name = "salt-kafka"
-version = "0.2.0"
+version = "0.3.0"
 source = { editable = "." }
 dependencies = [
     { name = "confluent-kafka" },
