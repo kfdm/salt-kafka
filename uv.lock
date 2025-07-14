@@ -35,11 +35,11 @@ wheels = [
 name = "salt"
 version = "3007.5"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/97/df/7a108838d73fd999cdb7dffe81dac6527c55ffc03a4052aee901c8ec1940/salt-3007.5.tar.gz", hash = "sha256:7f572e039059f1a597ba10a9bdc81dcc2375a49c49106581988f506039b3dda5", size = 19491027 }
+sdist = { url = "https://files.pythonhosted.org/packages/97/df/7a108838d73fd999cdb7dffe81dac6527c55ffc03a4052aee901c8ec1940/salt-3007.5.tar.gz", hash = "sha256:7f572e039059f1a597ba10a9bdc81dcc2375a49c49106581988f506039b3dda5", size = 19491027, upload-time = "2025-06-26T19:09:22.886Z" }
 
 [[package]]
 name = "salt-kafka"
-version = "0.1.0"
+version = "0.2.0"
 source = { virtual = "." }
 dependencies = [
     { name = "confluent-kafka" },
@@ -49,5 +49,5 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "confluent-kafka", specifier = ">=2.4.0" },
-    { name = "salt", specifier = ">=3006.0" },
+    { name = "salt", specifier = ">=3006" },
 ]
