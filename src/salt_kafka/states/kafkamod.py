@@ -35,6 +35,10 @@ def present(name, config: dict = None, num_partitions=-1, replication_factor=-1)
             ret["changes"]["to-create"] = name
             if config:
                 ret["changes"]["config"] = config
+            if num_partitions > 0:
+                ret["changes"]["num_partitions"] = num_partitions
+            if replication_factor > 0:
+                ret["changes"]["replication_factor"] = replication_factor
             ret["result"] = None
             return ret
         elif __salt__["kafka.create_topics"](
@@ -46,6 +50,10 @@ def present(name, config: dict = None, num_partitions=-1, replication_factor=-1)
             ret["changes"]["created"] = name
             if config:
                 ret["changes"]["config"] = config
+            if num_partitions > 0:
+                ret["changes"]["num_partitions"] = num_partitions
+            if replication_factor > 0:
+                ret["changes"]["replication_factor"] = replication_factor
             ret["comment"] = f"Created topic {name}"
             return ret
         else:
