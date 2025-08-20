@@ -24,16 +24,11 @@ or Via a salt state
 salt-minion:
   service.running:
     - enable: true
-  # Install any OS requirements
-  pkg.installed:
-    - aggregate: True
-    - pkgs:
-        - python3-docker
-        - python3-setproctitle
-  # Install any pip packages
   pip.installed:
     - pkgs:
         - salt-kafka
+    - require_in:
+      - service: salt-minion
 ```
 
 ## Engine
@@ -56,20 +51,24 @@ engines:
 
 ```yaml
 # Example minion config
-kafka.bootstrap.servers: "kafka.example.com:9094"
+kafka.bootstrap.servers: "kafka1.example.com:9092,kafka2.example.com:9092"
 ```
 
 ```yaml
 # Example kafka.sls
 my-topic:
-    kafka.present:
-        - config:
-              cleanup.policy: delete
-              retention.ms: {{salt['kafka.timedelta_ms']('2d')}}
-              retention.bytes: {{ "1GB" | human_to_bytes }}
+  kafka.present:
+    - name: my-topic
+    - num_partitions: 32
+    - replication_factor: 2
+    - config:
+        cleanup.policy: delete
+        compression.type: zstd
+        retention.ms: {{ salt['kafka.timedelta_ms']('2d') }}
+        retention.bytes: {{ "1GB" | human_to_bytes }}
 
-missing-topic:
-    kafka.absent: []
+delete-topic:
+  kafka.absent: []
 ```
 
-See the Upstream Kafka documentation at <http://kafka.apache.org/documentation.html#topicconfigs> for valid config options.
+See the upstream Kafka documentation at <http://kafka.apache.org/documentation.html#topicconfigs> for valid config options.
